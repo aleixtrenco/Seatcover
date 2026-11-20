@@ -21,7 +21,8 @@ Edit the `CONFIG` block at the top of the `<script type="module">` in `index.htm
 - `model`: path to the GLB bike model
 - `currency`, `locale`, `basePrice`, `prices`: shop pricing (currently AED)
 - `leadTime`: the yellow shipping line
-- `logoText`: text drawn on the seat logos in the preview
+- `seatLogo`: logo shown on the seat cover (the GUTS logo, as printed by GUTS Racing)
+- `bikeLogo`: logo shown on the bike's side number plates (Cactus Decal Lab)
 - `models`: model and year dropdowns
 - `heightCodes`: supplier part numbers for each height option. They're printed in the supplier order.
 

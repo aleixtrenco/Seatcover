@@ -32,7 +32,7 @@ button{font:inherit;color:inherit}
 
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 20px;background:#0f0f0f;color:#fff}
 .brand{display:flex;align-items:center;gap:10px;font-family:Oswald,sans-serif;font-weight:700;font-size:22px;letter-spacing:.04em}
-.brand svg{width:26px;height:26px}
+.brand img{height:40px;width:auto;display:block}
 .brand small{font-family:Inter,sans-serif;font-weight:500;font-size:12px;letter-spacing:.08em;opacity:.65;text-transform:uppercase;margin-left:6px}
 
 .layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(360px,1fr);min-height:calc(100vh - 54px)}
@@ -63,6 +63,8 @@ button{font:inherit;color:inherit}
 .crumbs .sep{opacity:.5}
 .fitment p{margin:4px 0 0;font-size:13px;color:var(--muted)}
 h1{font-size:40px;line-height:1.02;margin:0 0 10px;font-weight:700}
+.genuine{display:flex;align-items:center;gap:12px;margin:0 0 12px;font-size:13px;color:var(--muted)}
+.genuine img{height:22px;width:auto;flex:none}
 .ship{display:inline;background:var(--hl);color:#0e1c3a;font-weight:700;font-style:italic;font-size:17px;padding:0 3px}
 .desc{font-style:italic;color:var(--muted);margin:16px 0}
 .price-block{display:grid;gap:2px;margin:16px 0 22px}
@@ -144,7 +146,7 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
   .views button{padding:6px 9px;font-size:12px}
   .palette{gap:6px}
   .fit-badge{display:none}
-  .brand{font-size:18px}
+  .brand img{height:32px}
   .brand small{display:none}
   .topbar{padding:10px 16px}
 }
@@ -153,8 +155,7 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
 <body>
 <header class="topbar">
   <div class="brand">
-    <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="#4caf50" d="M14 3h4a2 2 0 0 1 2 2v22h-8V5a2 2 0 0 1 2-2Zm-8 8h2a2 2 0 0 1 2 2v5h2v4H8a4 4 0 0 1-4-4v-5a2 2 0 0 1 2-2Zm18 3h2a2 2 0 0 1 2 2v3a4 4 0 0 1-4 4h-2v-4h0v-3a2 2 0 0 1 2-2Z"/><rect x="6" y="27" width="20" height="2" fill="#4caf50"/></svg>
-    CACTUS DECAL <small>Seat Cover Builder</small>
+    <img src="assets/cactus-decal-logo.png" alt="Cactus Decal Lab"> <small>Seat Cover Builder</small>
   </div>
 </header>
 
@@ -191,6 +192,7 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
       <p>Pick your model and year. The 3D bike shows the CRF450 chassis.</p>
     </div>
 
+    <div class="genuine"><img src="assets/guts-logo.png" alt="GUTS Racing"><span>Genuine GUTS Racing seat cover, made in the USA. Supplied by Cactus Decal Lab.</span></div>
     <h1>Interactive Rib Seat Cover Design</h1>
     <div><span class="ship" id="leadTime"></span></div>
     <p class="desc">The interactive seat builder lets you see what your color combination will look like. The shape is a close approximation, and the number of ribs varies with the size of the seat.</p>
@@ -240,8 +242,8 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
 
     <fieldset id="fsLogo" data-required>
       <legend>Logo placement<span class="req">*</span>:</legend>
-      <label class="opt"><input type="radio" name="logo" value="full"><span>Oval logo top rear &amp; side logos</span></label>
-      <label class="opt"><input type="radio" name="logo" value="top"><span>Top rear logo only — no side logos</span></label>
+      <label class="opt"><input type="radio" name="logo" value="full"><span>GUTS logo top rear &amp; GUTS side logos</span></label>
+      <label class="opt"><input type="radio" name="logo" value="top"><span>GUTS top rear only — no side logos</span></label>
     </fieldset>
 
     <fieldset id="fsAttach" data-required>
@@ -322,7 +324,8 @@ const CONFIG = {
   basePrice: 294,
   prices: { ballistic: 62, bump: 117, step: 117, cleaner: 48, cleanerTowel: 81 },
   leadTime: 'Made to order in the USA · ships in approx. 3–4 weeks',
-  logoText: ['CACTUS', 'DECAL'],
+  seatLogo: 'assets/guts-logo.png',          // printed on the seat cover by GUTS Racing
+  bikeLogo: 'assets/cactus-decal-logo.png',  // shown on the bike's side number plates
   models: {
     'CRF450R':  ['2021', '2022', '2023', '2024', '2025'],
     'CRF450RX': ['2021', '2022', '2023', '2024', '2025'],
@@ -442,23 +445,6 @@ const camoTex = canvasTex(256, 256, (x, w, h) => {
   for (let n = 0; n < 40; n++) { x.beginPath(); const sx = rnd() * w, sy = rnd() * h; x.moveTo(sx, sy); x.lineTo(sx + (rnd() - .5) * 40, sy + (rnd() - .5) * 40); x.stroke(); }
 }, { repeat: [3.2, 3.2], srgb: true });
 
-function logoTex(kind) {
-  const [l1, l2] = CONFIG.logoText;
-  if (kind === 'oval') return canvasTex(1024, 640, (x, w, h) => {
-    x.fillStyle = '#ffffff'; x.beginPath(); x.ellipse(w / 2, h / 2, 500, 310, 0, 0, Math.PI * 2); x.fill();
-    x.fillStyle = '#111111'; x.beginPath(); x.ellipse(w / 2, h / 2, 468, 280, 0, 0, Math.PI * 2); x.fill();
-    x.fillStyle = '#4caf50'; x.fillRect(w / 2 - 300, h / 2 + 18, 600, 10);
-    x.fillStyle = '#ffffff'; x.textAlign = 'center'; x.textBaseline = 'alphabetic';
-    x.font = '700 220px Oswald, Impact, sans-serif'; x.fillText(l1, w / 2, h / 2 - 10);
-    x.font = '600 120px Oswald, Impact, sans-serif'; x.fillText(l2, w / 2, h / 2 + 150);
-  }, { srgb: true });
-  return canvasTex(1024, 256, (x, w, h) => {
-    x.fillStyle = '#ffffff'; x.beginPath(); x.roundRect(8, 8, w - 16, h - 16, 120); x.fill();
-    x.fillStyle = '#111111'; x.beginPath(); x.roundRect(24, 24, w - 48, h - 48, 104); x.fill();
-    x.fillStyle = '#ffffff'; x.textAlign = 'center'; x.textBaseline = 'middle';
-    x.font = '700 150px Oswald, Impact, sans-serif'; x.fillText(`${l1} ${l2}`, w / 2, h / 2 + 6);
-  }, { srgb: true });
-}
 const velcroTex = canvasTex(256, 256, (x, w, h) => {
   x.fillStyle = '#1a1a1a'; x.fillRect(0, 0, w, h);
   x.strokeStyle = '#2c2c2c'; x.lineWidth = 2;
@@ -583,9 +569,9 @@ function deformSeat(o) {
 }
 
 const ray = new THREE.Raycaster();
-function cast(origin, dir) {
+function cast(origin, dir, target = SEAT.mesh) {
   ray.set(origin, dir);
-  const h = ray.intersectObject(SEAT.mesh, false)[0]; if (!h) return null;
+  const h = ray.intersectObject(target, false)[0]; if (!h) return null;
   const n = (h.normal || h.face.normal).clone().normalize();
   if (n.dot(dir) > 0) n.negate();
   return { p: h.point.clone(), n };
@@ -641,10 +627,10 @@ function buildRibs() {
   return m;
 }
 // Logo / patch decals projected onto the seat. xDir = reading direction of the artwork.
-function decal(hit, xDir, size, mat) {
+function decal(hit, xDir, size, mat, target = SEAT.mesh) {
   const zA = hit.n.clone(), xA = xDir.clone().addScaledVector(zA, -xDir.dot(zA)).normalize(), yA = zA.clone().cross(xA);
   const rot = new THREE.Euler().setFromRotationMatrix(new THREE.Matrix4().makeBasis(xA, yA, zA));
-  return new THREE.Mesh(new DecalGeometry(SEAT.mesh, hit.p, rot, size), mat);
+  return new THREE.Mesh(new DecalGeometry(target, hit.p, rot, size), mat);
 }
 
 /* ============================ SCENE ============================ */
@@ -718,6 +704,13 @@ async function loadBike() {
   const box = new THREE.Box3().setFromObject(bike);
   ground.position.y = box.min.y + 0.001;
   initSeat(seatSrc);
+  // Cactus Decal logo on both side number plates
+  let plates = null;
+  bike.traverse(o => { if (o.isMesh && o.material.name === 'Livery Numberplates') plates = o; });
+  if (plates) for (const s of [1, -1]) {
+    const h = cast(V(s * 1.5, 0.89, -0.45), V(-s, 0, 0), plates);
+    if (h) scene.add(decal(h, V(0, 0, -s), V(0.25, 0.142, 0.1), M.bikeLogo, plates));
+  }
   setupViews(box);
 }
 
@@ -733,12 +726,12 @@ function rebuildSeat() {
   const back = V(0, 0, -1), fwd = V(0, 0, 1);
   const logo = state.logo || 'full';
   const top = hitDown(0, zOf(0.9));
-  if (top) extras.add(decal(top, back, V(0.11, 0.07, 0.06), M.logoTop));
+  if (top) extras.add(decal(top, back, V(0.15, 0.0275, 0.06), M.logoTop));
   if (logo === 'full') {
     const t = 0.58, z = zOf(t), y = binVal(SEAT.minY, t) + 0.5 * (binVal(SEAT.maxY, t) - binVal(SEAT.minY, t));
     const L = hitSide(1, y, z), R = hitSide(-1, y, z);
-    if (L) extras.add(decal(L, back, V(0.17, 0.042, 0.04), M.logoSide));
-    if (R) extras.add(decal(R, fwd, V(0.17, 0.042, 0.04), M.logoSide));
+    if (L) extras.add(decal(L, back, V(0.17, 0.031, 0.04), M.logoSide));
+    if (R) extras.add(decal(R, fwd, V(0.17, 0.031, 0.04), M.logoSide));
   }
   if (state.attach === 'velcro') { const v = hitDown(0, zOf(0.1)); if (v) extras.add(decal(v, back, V(0.06, 0.06, 0.06), M.velcro)); }
 }
@@ -859,7 +852,7 @@ function orderText() {
     `Height: ${h.label}${code ? ` (${code})` : ''}`,
     `Material: ${state.material === 'soft' ? 'Less aggressive' : 'Original grip (aggressive)'}`,
     `Colors: Side = ${cn('side')} | Center = ${cn('center')} | ${state.noRibs ? 'NO RIBS (2 colors)' : `Ribs = ${cn('rib')}`}`,
-    `Logos: ${state.logo === 'full' ? 'Oval top rear + side logos' : 'Top rear only, no side logos'}`,
+    `Logos: ${state.logo === 'full' ? 'GUTS top rear + GUTS side logos' : 'GUTS top rear only, no side logos'}`,
     `Attachment: ${state.attach === 'velcro' ? 'Velcro System (VS patch)' : 'Staple on'}`,
     `Ballistic nylon knee area: ${state.ballistic ? 'Yes (black)' : 'No'}`,
     `Bump / step: ${state.bump === 'none' ? 'None' : label('bump')}`,
@@ -881,8 +874,9 @@ function checkout() {
 /* ============================ BOOT ============================ */
 readHash();
 try { await Promise.race([document.fonts.load('700 100px Oswald'), new Promise(r => setTimeout(r, 2500))]); } catch {}
-M.logoTop = decalMat(logoTex('oval'));
-M.logoSide = decalMat(logoTex('side'));
+const loadTex = url => { const t = new THREE.TextureLoader().load(url); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; };
+M.logoTop = M.logoSide = decalMat(loadTex(CONFIG.seatLogo));
+M.bikeLogo = decalMat(loadTex(CONFIG.bikeLogo));
 buildUI(); bindUI();
 try {
   await loadBike();
