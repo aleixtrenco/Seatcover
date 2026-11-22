@@ -331,17 +331,18 @@ const CONFIG = {
   bikeLogo: 'assets/cactus-decal-logo.png',  // shown on the bike's side number plates
   // One entry per make: its 3D model, where the seat is inside the model, where the Cactus logo goes,
   // and the models/years the customer can pick (rib seat covers are universal per make).
+  // `recolor` repaints materials of a model by name (used to show the Honda model in other brands' colors).
   bikes: {
     Honda: {
       file: 'models/honda-crf.glb', preview: 'Honda CRF450R', defaultModel: 'CRF450R',
       seat: { material: 'SEAT' },
-      logo: { material: 'Livery Numberplates', y: 0.89, z: -0.45, size: [0.25, 0.142] },
+      logo: { material: 'Livery Shrouds', y: 0.95, z: 0.28, size: [0.2, 0.114] },
       models: { 'CRF450R': years(2021, 2025), 'CRF450RX': years(2021, 2025), 'CRF250R': years(2022, 2025) },
     },
     KTM: {
       file: 'models/ktm.glb', preview: 'KTM SX-F', defaultModel: '450 SX-F',
       seat: { material: 'Seat' },
-      logo: { material: 'Livery Plastics', y: 0.78, z: -0.38, size: [0.2, 0.114] },
+      logo: { material: 'Livery Plastics', y: 0.83, z: 0.25, size: [0.17, 0.097] },
       models: modelList(['50 SX', '65 SX', '85 SX', '125 SX', '150 SX', '250 SX', '300 SX', '250 SX-F', '350 SX-F', '450 SX-F',
         '125 XC', '150 XC', '250 XC', '300 XC', '250 XC-F', '350 XC-F', '450 XC-F', '150 XC-W', '250 XC-W', '300 XC-W', '350 XCF-W', '500 XCF-W',
         '150 EXC', '250 EXC', '300 EXC', '250 EXC-F', '350 EXC-F', '450 EXC-F', '500 EXC-F'], years(2011, 2026)),
@@ -350,20 +351,48 @@ const CONFIG = {
       file: 'models/husqvarna.glb', preview: 'Husqvarna TC / FC', defaultModel: 'FC 450',
       // this model has the seat inside the livery mesh: take the connected part that sits inside this box
       seat: { material: 'mat_livery_0_277_001_COLOR_0', box: [[-0.12, 0.72, -0.72], [0.12, 0.92, 0.18]] },
-      logo: { material: 'mat_livery_0_277_001_COLOR_0', y: 0.71, z: -0.31, size: [0.2, 0.114] },
+      logo: { material: 'mat_livery_0_277_001_COLOR_0', y: 0.75, z: 0.25, size: [0.15, 0.085] },
       models: modelList(['TC 50', 'TC 65', 'TC 85', 'TC 125', 'TC 250', 'FC 250', 'FC 350', 'FC 450', 'TX 300', 'FX 350', 'FX 450',
         'TE 150', 'TE 250', 'TE 300', 'FE 250', 'FE 350', 'FE 450', 'FE 501'], years(2014, 2026)),
     },
     Yamaha: {
       file: 'models/yamaha.glb', preview: 'Yamaha YZ450F', defaultModel: 'YZ450F',
       seat: { material: 'SEAT' },
-      logo: { material: 'NUMBERPLATES', y: 0.92, z: -0.36, size: [0.25, 0.142] },
+      logo: { material: 'SHROUDS', y: 0.98, z: 0.33, size: [0.2, 0.114] },
       models: modelList(['YZ65', 'YZ85', 'YZ125', 'YZ125X', 'YZ250', 'YZ250X', 'YZ250F', 'YZ250FX', 'YZ450F', 'YZ450FX'], years(2010, 2026)),
+    },
+    GasGas: {
+      file: 'models/honda-crf.glb', preview: 'GasGas-colored MX bike', defaultModel: 'MC 450F',
+      seat: { material: 'SEAT' },
+      logo: { material: 'Livery Shrouds', y: 0.95, z: 0.28, size: [0.2, 0.114] },
+      recolor: {
+        'Livery Shrouds': { color: '#d0001b', map: null, roughness: 0.45 },
+        'Livery Fenders': { color: '#d0001b', map: null, roughness: 0.45 },
+        'Livery Numberplates': { color: '#d0001b', map: null, roughness: 0.45 },
+        'FORKGUARD': { color: '#d0001b' },
+        'Honda_Red': { color: '#d0001b' },
+        'RIMS': { color: '#c9cdd2', metalness: 0.85, roughness: 0.3 },
+      },
+      models: modelList(['MC 50', 'MC 65', 'MC 85', 'MC 125', 'MC 250', 'MC 250F', 'MC 350F', 'MC 450F',
+        'EX 250', 'EX 300', 'EX 250F', 'EX 350F', 'EX 450F', 'EC 250', 'EC 300', 'EC 250F', 'EC 350F'], years(2021, 2026)),
+    },
+    Kawasaki: {
+      file: 'models/honda-crf.glb', preview: 'Kawasaki-colored MX bike', defaultModel: 'KX450',
+      seat: { material: 'SEAT' },
+      logo: { material: 'Livery Shrouds', y: 0.95, z: 0.28, size: [0.2, 0.114] },
+      recolor: {
+        'Livery Shrouds': { color: '#5fb52a', map: null, roughness: 0.45 },
+        'Livery Fenders': { color: '#5fb52a', map: null, roughness: 0.45 },
+        'Livery Numberplates': { color: '#5fb52a', map: null, roughness: 0.45 },
+        'FORKGUARD': { color: '#5fb52a' },
+        'Honda_Red': { color: '#5fb52a' },
+      },
+      models: modelList(['KX65', 'KX85', 'KX112', 'KX250', 'KX450', 'KX250X', 'KX450X', 'KX450SR'], years(2010, 2026)),
     },
     Stark: {
       file: 'models/stark-varg.glb', preview: 'Stark Varg', defaultModel: 'Varg MX',
       seat: { material: 'Seat' },
-      logo: { material: 'Body', y: 0.82, z: -0.36, size: [0.2, 0.114] },
+      logo: { material: 'Body', y: 0.86, z: 0.2, size: [0.17, 0.097] },   // no radiator on the electric Varg: front side panel
       models: modelList(['Varg MX', 'Varg EX', 'Varg SM'], years(2023, 2026)),
       credit: 'Stark Varg 3D model: "Stark Varg SM" by Hari Yojuta (sketchfab.com/hariroosi30), CC BY 4.0',
       creditUrl: 'https://sketchfab.com/3d-models/stark-varg-sm-bab4fe6d066342eeb96611f37c616311',
@@ -777,6 +806,15 @@ async function prepareBike(make) {
   root.traverse(o => {
     if (!o.isMesh) return;
     o.castShadow = o.receiveShadow = true;
+    const rc = cfg.recolor && cfg.recolor[o.material.name];
+    if (rc) {
+      const m = o.material;
+      if ('map' in rc) m.map = rc.map;
+      if (rc.color) m.color.set(rc.color);
+      if (rc.metalness !== undefined) m.metalness = rc.metalness;
+      if (rc.roughness !== undefined) m.roughness = rc.roughness;
+      m.needsUpdate = true;
+    }
     if (!seatSrc && o.material.name === cfg.seat.material) seatSrc = o;
     if (!logoTarget && o.material.name === cfg.logo.material) logoTarget = o;
   });

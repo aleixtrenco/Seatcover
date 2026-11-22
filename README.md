@@ -1,6 +1,7 @@
 # Cactus Decal — Seat Cover Builder
 
-Interactive rib seat cover configurator with a live 3D preview for Honda, KTM, Husqvarna, Yamaha and Stark (models in `models/`).
+Interactive rib seat cover configurator with a live 3D preview for Honda, KTM, Husqvarna, Yamaha, GasGas, Kawasaki and Stark (models in `models/`).
+GasGas and Kawasaki reuse the Honda model, repainted with `recolor` in `CONFIG.bikes`.
 It's a static page (`index.html`) with no build step. Three.js loads from a CDN.
 
 Each bike's seat comes from its own 3D model. It's found by material name, or by a bounding box when the seat is merged into another mesh (Husqvarna). The configurator colors the top as Center and the flanks as Side.
@@ -21,7 +22,7 @@ Edit the `CONFIG` block at the top of the `<script type="module">` in `index.htm
 - `bikes`: one entry per make, with:
   - its 3D model file
   - how to find the seat
-  - where the Cactus Decal logo goes
+  - where the Cactus Decal logo goes (on the radiator shrouds)
   - the model and year lists customers can pick (rib covers are universal, so KTM and Husqvarna list every model)
 - `currency`, `locale`, `basePrice`, `prices`: shop pricing (currently AED)
 - `leadTime`: the yellow shipping line
