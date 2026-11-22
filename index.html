@@ -347,6 +347,8 @@ const CONFIG = {
     KTM: {
       file: 'models/ktm.glb', preview: 'KTM SX-F', defaultModel: '450 SX-F',
       seat: { material: 'Seat' },
+      recolor: { 'Livery Plastics': { color: '#ff6a00', roughness: 0.42 } },
+      rims: { material: 'Metal', tyre: 'Tyre', color: '#141414' },
       logo: { material: 'Livery Plastics', y: 0.83, z: 0.25, size: [0.17, 0.097] },
       models: modelList(['50 SX', '65 SX', '85 SX', '125 SX', '150 SX', '250 SX', '300 SX', '250 SX-F', '350 SX-F', '450 SX-F',
         '125 XC', '150 XC', '250 XC', '300 XC', '250 XC-F', '350 XC-F', '450 XC-F', '150 XC-W', '250 XC-W', '300 XC-W', '350 XCF-W', '500 XCF-W',
@@ -608,7 +610,10 @@ function toWorldFloat(mesh) {
 }
 // Pull one connected part (the seat) out of a combined mesh: the biggest part that fits inside `box`.
 // Returns it as a world-space geometry and removes it from the source mesh.
-function extractPart(mesh, box) {
+// Split a combined mesh into connected parts (vertices welded by position) and pull out the parts `pick` selects.
+// `pick(part)` gets { tris, box, verts: [Vector3...] } in world space. The picked triangles are removed from
+// the source mesh and returned as one world-space geometry (or null if nothing matched).
+function extractParts(mesh, pick) {
   mesh.updateWorldMatrix(true, false);
   const src = mesh.geometry, pos = src.attributes.position, ix = src.index.array, n = pos.count, W = [];
   for (let i = 0; i < n; i++) W.push(new THREE.Vector3().fromBufferAttribute(pos, i).applyMatrix4(mesh.matrixWorld));
@@ -618,20 +623,39 @@ function extractPart(mesh, box) {
   for (let t = 0; t < ix.length; t += 3) { const a = find(rep[ix[t]]); par[find(rep[ix[t + 1]])] = a; par[find(rep[ix[t + 2]])] = a; }
   const comps = new Map();
   for (let t = 0; t < ix.length; t += 3) {
-    const r = find(rep[ix[t]]); let c = comps.get(r); if (!c) comps.set(r, c = { tris: [], box: new THREE.Box3() });
-    c.tris.push(t); for (let k = 0; k < 3; k++) c.box.expandByPoint(W[ix[t + k]]);
+    const r = find(rep[ix[t]]); let c = comps.get(r); if (!c) comps.set(r, c = { tris: [], box: new THREE.Box3(), vi: new Set() });
+    c.tris.push(t); for (let k = 0; k < 3; k++) { c.box.expandByPoint(W[ix[t + k]]); c.vi.add(ix[t + k]); }
   }
-  let best = null;
-  for (const c of comps.values()) if (box.containsBox(c.box) && (!best || c.tris.length > best.tris.length)) best = c;
-  if (!best) return null;
-  const map = new Map(), P = [], idx = [], taken = new Set(best.tris);
-  for (const t of best.tris) for (let k = 0; k < 3; k++) {
-    const o = ix[t + k]; if (!map.has(o)) { map.set(o, P.length / 3); P.push(W[o].x, W[o].y, W[o].z); } idx.push(map.get(o));
+  const chosen = pick([...comps.values()].map(c => Object.assign(c, { get verts() { return [...c.vi].map(i => W[i]); } })));
+  if (!chosen || !chosen.length) return null;
+  const map = new Map(), P = [], idx = [], taken = new Set();
+  for (const c of chosen) for (const t of c.tris) {
+    taken.add(t);
+    for (let k = 0; k < 3; k++) { const o = ix[t + k]; if (!map.has(o)) { map.set(o, P.length / 3); P.push(W[o].x, W[o].y, W[o].z); } idx.push(map.get(o)); }
   }
   const keep = []; for (let t = 0; t < ix.length; t += 3) if (!taken.has(t)) keep.push(ix[t], ix[t + 1], ix[t + 2]);
   src.setIndex(keep);
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(P, 3)); g.setIndex(idx);
+  g.computeVertexNormals();
   return g;
+}
+// the seat: biggest connected part that fits inside `box`
+const extractPart = (mesh, box) => extractParts(mesh, parts => {
+  const inside = parts.filter(c => box.containsBox(c.box)).sort((a, b) => b.tris.length - a.tris.length);
+  return inside.length ? [inside[0]] : null;
+});
+// rim hoops: rings around each wheel axle between `inner` and `outer` × tyre radius, close to the wheel's centre plane
+function extractRims(root, metalMesh, tyreMaterial, { inner = 0.6, outer = 0.88, width = 0.06, minTris = 200 } = {}) {
+  let tyre = null; root.traverse(o => { if (o.isMesh && o.material.name === tyreMaterial) tyre = o; });
+  if (!tyre) return null;
+  tyre.updateWorldMatrix(true, false);
+  const tp = tyre.geometry.attributes.position, v = new THREE.Vector3(), boxes = [new THREE.Box3(), new THREE.Box3()];
+  for (let i = 0; i < tp.count; i++) { v.fromBufferAttribute(tp, i).applyMatrix4(tyre.matrixWorld); boxes[v.z > 0 ? 0 : 1].expandByPoint(v); }
+  const wheels = boxes.map(b => ({ c: b.getCenter(new THREE.Vector3()), R: b.getSize(new THREE.Vector3()).y / 2 }));
+  return extractParts(metalMesh, parts => parts.filter(c => c.tris.length >= minTris && wheels.some(w => c.verts.every(p => {
+    const r = Math.hypot(p.y - w.c.y, p.z - w.c.z);
+    return r >= inner * w.R && r <= outer * w.R && Math.abs(p.x - w.c.x) <= width;
+  }))));
 }
 function initSeat(g) {
   const p = g.attributes.position, NB = SEAT.NB;
@@ -909,6 +933,11 @@ async function prepareBike(make) {
     if (!logoTarget && o.material.name === cfg.logo.material) logoTarget = o;
   });
   if (!seatSrc) throw new Error(`No mesh with material "${cfg.seat.material}" in ${cfg.file}`);
+  if (cfg.rims) {   // repaint rim hoops that are merged into another mesh
+    let metal = null; root.traverse(o => { if (!metal && o.isMesh && o.material.name === cfg.rims.material) metal = o; });
+    const g = metal && extractRims(root, metal, cfg.rims.tyre);
+    if (g) { const m = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ color: cfg.rims.color, metalness: 0.6, roughness: 0.35 })); m.castShadow = m.receiveShadow = true; root.add(m); }
+  }
   let seatGeo;
   if (cfg.seat.box) seatGeo = extractPart(seatSrc, new THREE.Box3(V(...cfg.seat.box[0]), V(...cfg.seat.box[1])));
   else { seatGeo = toWorldFloat(seatSrc); seatSrc.parent.remove(seatSrc); }
