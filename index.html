@@ -53,6 +53,7 @@ button{font:inherit;color:inherit}
 .views button:hover{color:var(--ink)}
 .views button.on{background:var(--ink);color:var(--surface)}
 .hint{font-size:12px;color:var(--muted)}
+.credit{font-size:11px;color:var(--muted);pointer-events:auto;text-align:center}
 .loading{position:absolute;inset:0;display:grid;place-items:center;font-family:Oswald,sans-serif;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
 
 .panel{background:var(--surface);border-left:1px solid var(--line);padding:24px 28px 120px}
@@ -179,6 +180,7 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
         <button data-view="rear">Rear</button>
       </div>
       <div class="hint">Drag to rotate · scroll or pinch to zoom · right-drag to pan</div>
+      <a class="credit" id="credit" target="_blank" rel="noopener" hidden></a>
     </div>
   </section>
 
@@ -351,6 +353,20 @@ const CONFIG = {
       logo: { material: 'mat_livery_0_277_001_COLOR_0', y: 0.71, z: -0.31, size: [0.2, 0.114] },
       models: modelList(['TC 50', 'TC 65', 'TC 85', 'TC 125', 'TC 250', 'FC 250', 'FC 350', 'FC 450', 'TX 300', 'FX 350', 'FX 450',
         'TE 150', 'TE 250', 'TE 300', 'FE 250', 'FE 350', 'FE 450', 'FE 501'], years(2014, 2026)),
+    },
+    Yamaha: {
+      file: 'models/yamaha.glb', preview: 'Yamaha YZ450F', defaultModel: 'YZ450F',
+      seat: { material: 'SEAT' },
+      logo: { material: 'NUMBERPLATES', y: 0.92, z: -0.36, size: [0.25, 0.142] },
+      models: modelList(['YZ65', 'YZ85', 'YZ125', 'YZ125X', 'YZ250', 'YZ250X', 'YZ250F', 'YZ250FX', 'YZ450F', 'YZ450FX'], years(2010, 2026)),
+    },
+    Stark: {
+      file: 'models/stark-varg.glb', preview: 'Stark Varg', defaultModel: 'Varg MX',
+      seat: { material: 'Seat' },
+      logo: { material: 'Body', y: 0.82, z: -0.36, size: [0.2, 0.114] },
+      models: modelList(['Varg MX', 'Varg EX', 'Varg SM'], years(2023, 2026)),
+      credit: 'Stark Varg 3D model: "Stark Varg SM" by Hari Yojuta (sketchfab.com/hariroosi30), CC BY 4.0',
+      creditUrl: 'https://sketchfab.com/3d-models/stark-varg-sm-bab4fe6d066342eeb96611f37c616311',
     },
   },
 
@@ -849,6 +865,8 @@ function fillYears() {
 function syncUI() {
   $('#selMake').value = state.make; $('#selModel').value = state.model; $('#selYear').value = state.year;
   $('#badgeFit').textContent = `${state.make} ${state.model} ${state.year}`;
+  const bk = CONFIG.bikes[state.make], cr = $('#credit');
+  cr.hidden = !bk.credit; cr.textContent = bk.credit || ''; if (bk.creditUrl) cr.href = bk.creditUrl;
   $('#fitNote').textContent = `Rib seat covers are universal, so every ${state.make} model is available. 3D preview shown on a ${CONFIG.bikes[state.make].preview}.`;
   if (state.noRibs && state.part === 'rib') state.part = 'side';
   $$('.part').forEach(b => {
