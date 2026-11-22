@@ -38,6 +38,8 @@ button{font:inherit;color:inherit}
 #stage canvas:active{cursor:grabbing}
 .v-top{position:absolute;top:14px;left:14px;right:14px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;pointer-events:none}
 .v-top > *{pointer-events:auto}
+.brand-tl{display:flex;align-items:flex-start;gap:10px}
+.brand-tl img{height:76px;width:auto;display:block;filter:drop-shadow(0 2px 6px rgba(0,0,0,.25))}
 .fit-badge{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:6px 10px;font-size:12px;color:var(--muted)}
 .fit-badge b{color:var(--ink);font-family:Oswald,sans-serif;font-size:15px;letter-spacing:.02em;text-transform:uppercase}
 .icon-btn{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:7px 10px;font-size:13px;cursor:pointer}
@@ -123,8 +125,16 @@ fieldset.missing legend::after{content:"  — please choose an option";font-weig
 dialog{border:0;padding:0;max-width:560px;width:calc(100% - 32px);background:var(--surface);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.35)}
 dialog::backdrop{background:rgba(0,0,0,.55)}
 .dlg{padding:22px 24px}
+dialog{max-height:92vh;overflow:auto}
 .dlg h2{margin:0 0 6px;font-size:26px}
 .dlg img{width:100%;display:block;background:var(--stage);margin:10px 0}
+.spec{width:100%;border-collapse:collapse;font-size:13.5px;margin:6px 0}
+.spec td{padding:4px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.spec td:first-child{color:var(--muted);width:42%;padding-right:10px}
+.dlg-total{display:flex;justify-content:space-between;align-items:baseline;margin:12px 0 4px;font-family:Oswald,sans-serif;font-size:22px}
+.dlg-note{font-size:12.5px;color:var(--muted);margin:4px 0 14px}
+.dlg-note.err{color:var(--warn)}
+.cta:disabled{opacity:.6;cursor:wait}
 .dlg pre{background:var(--chip);border:1px solid var(--line);padding:12px;font-size:12.5px;white-space:pre-wrap;max-height:240px;overflow:auto;margin:10px 0}
 .dlg .row{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
 .btn2{border:1px solid var(--line);background:var(--surface);padding:9px 14px;cursor:pointer;font-size:14px}
@@ -143,6 +153,7 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
   .views button{padding:6px 9px;font-size:12px}
   .palette{gap:6px}
   .fit-badge{display:none}
+  .brand-tl img{height:50px}
 }
 </style>
 </head>
@@ -153,10 +164,9 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
     <div id="stage"></div>
     <div class="loading" id="loading">Loading 3D preview…</div>
     <div class="v-top">
-      <div class="fit-badge"><b id="badgeFit">Honda CRF450R</b><br>Live 3D preview</div>
+      <div class="brand-tl"><img src="assets/cactus-decal-logo.png" alt="Cactus Decal Lab"><div class="fit-badge"><b id="badgeFit">Honda CRF450R</b><br>Live 3D preview</div></div>
       <div style="display:flex;gap:6px">
         <button class="icon-btn" id="btnSpin" title="Auto rotate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg><span>Spin</span></button>
-        <button class="icon-btn" id="btnShot" title="Download image"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 21h16"/></svg><span>Image</span></button>
       </div>
     </div>
     <div class="v-bottom">
@@ -276,15 +286,23 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
 
 <dialog id="dlg">
   <div class="dlg">
-    <h2>Your seat cover</h2>
-    <div style="font-size:13px;color:var(--muted)">Prototype: connect this button to your shop cart. The text below is the order to send to the supplier.</div>
+    <h2>Review your seat cover</h2>
     <img id="dlgImg" alt="Preview of the designed seat cover">
-    <pre id="dlgText"></pre>
+    <table class="spec" id="dlgSpec"></table>
+    <div class="dlg-total"><span>Total</span><b id="dlgTotal"></b></div>
+    <p class="dlg-note" id="dlgNote">Shipping address and payment are taken securely by Stripe on the next page.</p>
     <div class="row">
       <button class="btn2" id="copyLink">Copy design link</button>
-      <button class="btn2" id="copyOrder">Copy supplier order</button>
-      <button class="cta" id="dlgClose" style="padding:9px 18px;font-size:15px">Done</button>
+      <button class="btn2" id="dlgClose">Keep editing</button>
+      <button class="cta" id="payBtn" style="padding:9px 18px;font-size:15px">Checkout</button>
     </div>
+  </div>
+</dialog>
+<dialog id="thanks">
+  <div class="dlg">
+    <h2>Thank you for your order!</h2>
+    <p>Your payment went through and your seat cover goes into production. You'll get a receipt by email from Stripe, and we'll be in touch with shipping details.</p>
+    <div class="row"><button class="cta" id="thanksClose" style="padding:9px 18px;font-size:15px">Back to the builder</button></div>
   </div>
 </dialog>
 <div class="toast" id="toast"></div>
@@ -303,6 +321,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { DecalGeometry } from 'three/addons/geometries/DecalGeometry.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { PRICING, COLOR_NAMES, validate, quote, describe } from './shop.mjs';
 
 /* =====================================================================
    SHOP SETTINGS — edit these to match your prices and supplier details
@@ -310,10 +329,8 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 function years(from, to) { const out = []; for (let y = from; y <= to; y++) out.push(String(y)); return out; }
 function modelList(names, yrs) { return Object.fromEntries(names.map(n => [n, yrs])); }
 const CONFIG = {
-  currency: 'AED',
-  locale: 'en-AE',
-  basePrice: 294,
-  prices: { ballistic: 62, bump: 117, step: 117, cleaner: 48, cleanerTowel: 81 },
+  ...PRICING,                                // prices, currency and shipping live in shop.mjs (shared with the checkout server)
+  checkoutUrl: '/api/checkout',             // Stripe checkout function (api/checkout.js)
   leadTime: 'Usually ships within 6–10 days',
   seatLogo: 'assets/guts-logo.png',          // printed on the seat cover by GUTS Racing
   bikeLogo: 'assets/cactus-decal-logo.png',  // shown on the bike's side number plates
@@ -423,6 +440,7 @@ const PRESETS = [
   { name: 'Tricolor',     side: 'navy',  center: 'white', rib: 'red' },
 ];
 const PART_NAMES = { side: 'Side', center: 'Center', rib: 'Rib' };
+for (const c of COLORS) c.name = COLOR_NAMES[c.id] || c.name;
 const colorById = id => COLORS.find(c => c.id === id) || COLORS[0];
 
 /* ============================ STATE ============================ */
@@ -999,13 +1017,7 @@ function syncUI() {
   $('#priceNote').textContent = state.qty > 1 ? `${state.qty} × ${money(unit)}` : 'incl. selected options';
   writeHash();
 }
-function unitPrice() {
-  const P = CONFIG.prices; let p = CONFIG.basePrice;
-  if (state.ballistic) p += P.ballistic;
-  if (state.bump === 'bump') p += P.bump; else if (state.bump !== 'none') p += P.step;
-  if (state.cleaner === 'cleaner') p += P.cleaner; else if (state.cleaner === 'towel') p += P.cleanerTowel;
-  return p;
-}
+function unitPrice() { return quote({ ...state, qty: 1 }).unit; }
 function update({ geo = false, colors = false } = {}) {
   if (geo) rebuildSeat();
   if (colors) applyAllColors();
@@ -1017,7 +1029,6 @@ function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.ad
 function bindUI() {
   $$('#views button').forEach(b => b.onclick = () => goView(b.dataset.view));
   $('#btnSpin').onclick = () => { controls.autoRotate = !controls.autoRotate; $('#btnSpin').style.borderColor = controls.autoRotate ? 'var(--ink)' : ''; };
-  $('#btnShot').onclick = () => { const a = document.createElement('a'); a.href = snapshot(); a.download = `cactus-decal-seat-${state.make}-${state.model}-${state.year}.png`.replace(/\s+/g, '-'); a.click(); };
   $('#selMake').onchange = e => {
     state.make = e.target.value; state.model = CONFIG.bikes[state.make].defaultModel; fillModels(); update();
     loadBike(state.make).catch(err => { console.error(err); toast('Could not load the 3D model'); });
@@ -1045,7 +1056,8 @@ function bindUI() {
   $('#qPlus').onclick = () => { state.qty = Math.min(20, state.qty + 1); update(); };
   $('#btnCart').onclick = checkout;
   $('#dlgClose').onclick = () => $('#dlg').close();
-  $('#copyOrder').onclick = () => copy($('#dlgText').textContent, 'Supplier order copied');
+  $('#payBtn').onclick = pay;
+  $('#thanksClose').onclick = () => { $('#thanks').close(); history.replaceState(null, '', location.pathname + location.hash); };
   $('#copyLink').onclick = () => copy(location.href, 'Design link copied');
 }
 function clearMissing(t) { t.closest('fieldset')?.classList.remove('missing'); }
@@ -1060,33 +1072,35 @@ function snapshot() {
   return c.toDataURL('image/png');
 }
 
-function orderText() {
-  const h = HEIGHTS.find(x => x.id === state.height), code = CONFIG.heightCodes[state.height];
-  const cn = p => colorById(state.colors[p]).name;
-  const label = (name) => $(`input[name=${name}]:checked`)?.closest('.opt').querySelector('span').childNodes[0].textContent.trim();
-  return [
-    'CACTUS DECAL — Rib seat cover order',
-    `Bike: ${state.make} ${state.model} ${state.year}`,
-    `Height: ${h.label}${code ? ` (${code})` : ''}`,
-    `Material: ${state.material === 'soft' ? 'Less aggressive' : 'Original grip (aggressive)'}`,
-    `Colors: Side = ${cn('side')} | Center = ${cn('center')} | ${state.noRibs ? 'NO RIBS (2 colors)' : `Ribs = ${cn('rib')}`}`,
-    `Logos: ${state.logo === 'full' ? 'GUTS top rear + GUTS side logos' : 'GUTS top rear only, no side logos'}`,
-    `Attachment: ${state.attach === 'velcro' ? 'Velcro System (VS patch)' : 'Staple on'}`,
-    `Ballistic nylon knee area: ${state.ballistic ? 'Yes (black)' : 'No'}`,
-    `Bump / step: ${state.bump === 'none' ? 'None' : label('bump')}`,
-    `Cleaner: ${state.cleaner === 'none' ? 'None' : label('cleaner')}`,
-    `Quantity: ${state.qty}`,
-    `Total: ${money(unitPrice() * state.qty)}`,
-    '', `Design link: ${location.href}`,
-  ].join('\n');
+function orderPayload() {
+  const { make, model, year, colors, height, material, logo, attach, noRibs, ballistic, bump, cleaner, qty } = state;
+  return { make, model, year, colors: { ...colors }, height, material, logo, attach, noRibs, ballistic, bump, cleaner, qty, link: location.href };
 }
 function checkout() {
   const missing = $$('fieldset[data-required]').filter(fs => !fs.querySelector('input:checked'));
   $$('fieldset[data-required]').forEach(fs => fs.classList.toggle('missing', missing.includes(fs)));
   if (missing.length) { missing[0].scrollIntoView({ behavior: 'smooth', block: 'center' }); toast('Please choose the required options (*)'); return; }
+  const order = validate(orderPayload());
   $('#dlgImg').src = snapshot();
-  $('#dlgText').textContent = orderText();
+  $('#dlgSpec').innerHTML = describe(order).map(([k, v]) => `<tr><td>${k}</td><td>${v.replace(/</g, '&lt;')}</td></tr>`).join('');
+  $('#dlgTotal').textContent = money(quote(order).total) + (CONFIG.shipping ? '' : ' · free shipping');
+  const note = $('#dlgNote'); note.classList.remove('err'); note.textContent = 'Shipping address and payment are taken securely by Stripe on the next page.';
+  $('#payBtn').disabled = false; $('#payBtn').textContent = 'Checkout';
   $('#dlg').showModal();
+}
+async function pay() {
+  const btn = $('#payBtn'), note = $('#dlgNote');
+  btn.disabled = true; btn.textContent = 'Opening secure checkout…';
+  try {
+    const r = await fetch(CONFIG.checkoutUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(orderPayload()) });
+    const data = await r.json().catch(() => ({}));
+    if (r.ok && data.url) { location.href = data.url; return; }
+    throw new Error(data.error || 'Online payment is not available right now.');
+  } catch (e) {
+    note.classList.add('err');
+    note.textContent = `${e.message === 'Failed to fetch' ? 'Online payment is not available right now.' : e.message} Please try again, or send us your design link.`;
+    btn.disabled = false; btn.textContent = 'Try again';
+  }
 }
 
 /* ============================ BOOT ============================ */
@@ -1103,6 +1117,7 @@ try {
   document.getElementById('loading').textContent = 'Could not load the 3D model. Open the page through a web server (see README).';
 }
 update({ geo: true, colors: true });
+if (new URLSearchParams(location.search).get('checkout') === 'success') $('#thanks').showModal();
 window.__cfg = { state, scene, camera, controls, goView, SEAT };
 </script>
 </body>

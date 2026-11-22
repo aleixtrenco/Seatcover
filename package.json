@@ -1,0 +1,6 @@
+{
+  "name": "seatcover",
+  "private": true,
+  "type": "module",
+  "description": "Cactus Decal seat cover builder (static page + Stripe checkout function in api/)"
+}

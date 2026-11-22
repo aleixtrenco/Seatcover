@@ -14,6 +14,30 @@ python3 -m http.server 8000
 ```
 
 Then open http://localhost:8000. The model can't load if you open the file directly (file://).
+The Stripe checkout only works when the site is deployed (see below). Locally, Checkout shows a "payment not available" message.
+
+## Taking payments with Stripe
+
+"Add to cart" opens a review of the design, then **Checkout** sends the customer to a Stripe Checkout page.
+The customer enters their shipping address, phone number and payment there.
+
+`api/checkout.js` is a small server function. It recalculates the price from `shop.mjs`, so prices can't be changed in the browser.
+It attaches the full seat spec to the Stripe payment (bike, height, material, colors, logos, attachment, extras, quantity and design link), so every order in your Stripe dashboard has what you need to order from GUTS.
+
+### Set up (one time, about 10 minutes)
+
+1. Create a free account at https://vercel.com and choose **Add New → Project → Import** this GitHub repository (no build settings needed).
+2. In your Stripe dashboard go to **Developers → API keys** and copy the **Secret key**. Start with the test key (`sk_test_…`).
+3. In Vercel go to **Project → Settings → Environment Variables** and add:
+   - `STRIPE_SECRET_KEY` = your Stripe secret key
+   - `SITE_URL` = your site address (for example `https://seats.cactusdecal.com`). This is optional but recommended.
+4. Redeploy. Test a purchase with Stripe's test card `4242 4242 4242 4242`. When it works, replace the test key with the live key (`sk_live_…`).
+
+Never put the secret key in the code or in GitHub.
+
+### Prices, shipping and countries
+
+Prices, currency, flat shipping (`shipping`) and the countries you ship to (`shipCountries`) are all set in **`shop.mjs`**. Both the page and the checkout use this file.
 
 ## Customize
 
@@ -24,7 +48,6 @@ Edit the `CONFIG` block at the top of the `<script type="module">` in `index.htm
   - how to find the seat
   - where the Cactus Decal logo goes (on the radiator shrouds)
   - the model and year lists customers can pick (rib covers are universal, so KTM and Husqvarna list every model)
-- `currency`, `locale`, `basePrice`, `prices`: shop pricing (currently AED)
 - `leadTime`: the yellow shipping line
 - `seatLogo`: logo shown on the seat cover (the GUTS logo, as printed by GUTS Racing)
 - `bikeLogo`: logo shown on the bike's side number plates (Cactus Decal Lab)
