@@ -1,5 +1,6 @@
 // Serverless function (Vercel): creates a Stripe Checkout page for one configured seat cover.
-// Needs the environment variable STRIPE_SECRET_KEY (set it in the hosting dashboard, never in the code).
+// Needs the environment variable CACTUS_STRIPE_SECRET_KEY (set it in the hosting dashboard, never in the code).
+// Falls back to STRIPE_SECRET_KEY, which Vercel's Stripe integration may create and lock to its own sandbox.
 // Optional: SITE_URL (e.g. https://seats.cactusdecal.com) for the return links after payment.
 import { PRICING, validate, quote, describe } from '../shop.mjs';
 
@@ -15,7 +16,7 @@ function encode(obj, prefix = '', out = new URLSearchParams()) {
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return res.status(405).json({ error: 'Method not allowed' }); }
-  const key = process.env.STRIPE_SECRET_KEY;
+  const key = process.env.CACTUS_STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY;
   if (!key) return res.status(503).json({ error: 'Online payment is not set up yet.' });
 
   let order;

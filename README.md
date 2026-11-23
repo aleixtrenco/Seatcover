@@ -29,7 +29,7 @@ It attaches the full seat spec to the Stripe payment (bike, height, material, co
 1. Create a free account at https://vercel.com and choose **Add New → Project → Import** this GitHub repository (no build settings needed).
 2. In your Stripe dashboard go to **Developers → API keys** and copy the **Secret key**. Start with the test key (`sk_test_…`).
 3. In Vercel go to **Project → Settings → Environment Variables** and add:
-   - `STRIPE_SECRET_KEY` = your Stripe secret key
+   - `CACTUS_STRIPE_SECRET_KEY` = your Stripe secret key (from your own Stripe account). `STRIPE_SECRET_KEY` also works, but Vercel's Stripe integration may create that one, lock it and point it at a separate sandbox, so the `CACTUS_` name wins when both exist.
    - `SITE_URL` = your site address (for example `https://seats.cactusdecal.com`). This is optional but recommended.
 4. Redeploy. Test a purchase with Stripe's test card `4242 4242 4242 4242`. When it works, replace the test key with the live key (`sk_live_…`).
 
