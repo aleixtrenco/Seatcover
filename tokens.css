@@ -1,0 +1,23 @@
+:root {
+  --space-3xs: 2px; --space-2xs: 4px; --space-xs: 8px; --space-sm: 12px; --space-md: 16px; --space-lg: 24px; --space-xl: 40px; --space-2xl: 64px; --space-3xl: 96px; --space-4xl: 144px;
+  --text-xs: 0.8125rem; --text-sm: 0.875rem; --text-md: 1rem; --text-lg: 1.25rem; --text-xl: 1.5625rem; --text-2xl: 1.953rem; --text-3xl: 2.441rem;
+  --text-display-s: clamp(2.25rem, 4vw + 0.5rem, 3.75rem); --text-display: clamp(2.75rem, 5vw + 1rem, 5.25rem);
+  --text-section: clamp(2rem, 2.5vw + 1rem, 3.5rem); --text-title: clamp(1.25rem, 0.75vw + 0.875rem, 1.625rem); --text-lead: clamp(1.125rem, 0.35vw + 1rem, 1.375rem);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1); --ease-in: cubic-bezier(0.7, 0, 0.84, 0); --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-micro: 120ms; --dur-short: 220ms; --dur-long: 420ms;
+  --color-error: oklch(52% 0.19 27); --color-success: oklch(50% 0.12 150);
+  --container: 1440px; --gutter: 64px; --gap-columns: 32px; --section-gap-s: 120px; --section-gap: 144px; --section-gap-l: 176px;
+  --z-base: 1; --z-raised: 10; --z-dropdown: 100; --z-sticky: 200; --z-sticky-nav: 300; --z-modal: 400; --z-toast: 500; --z-tooltip: 600;
+  /* Cactus Decal Lab: near-black paper tinted toward the brand green (hue 128), the logo's green as the one accent */
+  --color-paper: oklch(15% 0.01 128); --color-paper-2: oklch(19.5% 0.012 128); --color-paper-3: oklch(25% 0.014 128);
+  --color-ink: oklch(95% 0.008 128); --color-ink-2: oklch(85% 0.01 128); --color-muted: oklch(70% 0.012 128);
+  --color-rule: oklch(32% 0.012 128);
+  --color-accent: oklch(76% 0.17 128); --color-accent-ink: oklch(17% 0.03 128); --color-focus: oklch(80% 0.19 128);
+  --color-warn: oklch(72% 0.16 35);
+  --color-scrim: oklch(8% 0.01 128 / 0.66); --color-shade: oklch(8% 0.01 128 / 0.4);
+  --color-bloom: oklch(76% 0.17 128 / 0.16); --color-bloom-warm: oklch(56% 0.15 35 / 0.22);
+  --color-swatch-edge: oklch(95% 0.008 128 / 0.22);
+  --font-display: "Oswald", Impact, "Arial Narrow", sans-serif; --font-body: "Inter", ui-sans-serif, system-ui, sans-serif; --font-outlier: var(--font-body);
+  --radius-card: 6px; --radius-control: 6px; --radius-swatch: 4px; --radius-pill: 999px; --rule-hair: 1px; --shadow-card: none;
+  --tracking-display: 0.005em; --display-weight: 700; --control-h: 44px; --control-h-app: 40px;
+}

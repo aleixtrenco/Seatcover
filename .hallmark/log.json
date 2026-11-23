@@ -1,0 +1,30 @@
+[
+ {
+  "mode": "redesign",
+  "depth": "full",
+  "scope": "page",
+  "shape": "Stage intro over an app screen",
+  "theme": "brand",
+  "axes": "dark/display-condensed/chromatic-green",
+  "hero": "Stage",
+  "nav": "logo bar, supplier mark right",
+  "footer": "fact rail",
+  "imagery": "live 3D product render",
+  "photos": [],
+  "entry": "intro",
+  "fingerprint": "stage|chips-picker|live-3d|fact-rail|app-panel",
+  "sections": [
+   "intro hero",
+   "fact rail",
+   "builder viewer",
+   "spec panel",
+   "colors",
+   "options",
+   "buy bar"
+  ],
+  "signature": "the GUTS seat cover live in 3D, recoloured from the first screen",
+  "waived": [],
+  "prompt": "motocross seat cover configurator and checkout for GCC riders",
+  "date": "2026-11-23"
+ }
+]
