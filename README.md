@@ -39,6 +39,8 @@ Never put the secret key in the code or in GitHub.
 
 Prices, currency, flat shipping (`shipping`) and the countries you ship to (`shipCountries`) are all set in **`shop.mjs`**. Both the page and the checkout use this file.
 
+The prices in `NET` are what you want to receive. The Stripe card fee (`STRIPE_FEE`: 3.9% + AED 1 plus 5% VAT on the fee) is added to every price automatically, rounded up to whole AED. Customers just see the final price. If your Stripe rate is different, change `STRIPE_FEE`.
+
 ## Customize
 
 Edit the `CONFIG` block at the top of the `<script type="module">` in `index.html`:

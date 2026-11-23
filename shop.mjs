@@ -1,11 +1,25 @@
 /* Shop rules shared by the page (index.html) and the Stripe checkout function (api/checkout.js).
    The server recomputes every price from these rules, so the customer's browser can't change what they pay. */
 
+// Your prices before card fees (what you want to receive). Edit these.
+const NET = {
+  basePrice: 294,
+  prices: { ballistic: 62, bump: 117, step: 117, cleaner: 48, cleanerTowel: 81 },
+};
+// Stripe's card fee, built into every shown price (not shown to customers as a separate fee).
+// UAE Stripe: 2.9% + AED 1 per payment, +1% for cards issued outside the UAE (most GCC customers), plus 5% VAT on the fee.
+// Check your rate in the Stripe Dashboard and adjust if it differs.
+export const STRIPE_FEE = { percent: 3.9, fixed: 1, vatOnFee: 5 };
+const feeRate = STRIPE_FEE.percent / 100 * (1 + STRIPE_FEE.vatOnFee / 100);
+const feeFixed = STRIPE_FEE.fixed * (1 + STRIPE_FEE.vatOnFee / 100);
+// Smallest whole-AED price that still leaves the net amount after Stripe takes its fee.
+const withFee = (net, fixed = 0) => Math.ceil((net + fixed) / (1 - feeRate));
+
 export const PRICING = {
   currency: 'AED',
   locale: 'en-AE',
-  basePrice: 294,
-  prices: { ballistic: 62, bump: 117, step: 117, cleaner: 48, cleanerTowel: 81 },
+  basePrice: withFee(NET.basePrice, feeFixed),          // the per-payment fixed fee is carried by the seat price
+  prices: Object.fromEntries(Object.entries(NET.prices).map(([k, v]) => [k, withFee(v)])),
   shipping: 0,                                          // flat shipping per order (0 = free)
   shipCountries: ['AE', 'SA', 'OM', 'QA', 'BH', 'KW'],  // countries customers can ship to (ISO codes)
 };
