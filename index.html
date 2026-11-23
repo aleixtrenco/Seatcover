@@ -155,9 +155,98 @@ dialog{max-height:92vh;overflow:auto}
   .fit-badge{display:none}
   .brand-tl img{height:50px}
 }
+
+/* ---------- intro (landing) ---------- */
+html.has-design #intro{display:none}
+body.intro-open{overflow:hidden}
+.intro{position:fixed;inset:0;z-index:50;overflow:auto;color:#fff;background:
+  radial-gradient(60% 70% at 70% 52%,rgba(140,198,63,.22) 0%,rgba(140,198,63,0) 60%),
+  radial-gradient(45% 55% at 66% 60%,rgba(170,40,30,.28) 0%,rgba(170,40,30,0) 70%),#0a0a0a;
+  transition:opacity .45s ease,visibility .45s}
+.intro.closing{opacity:0;visibility:hidden}
+.intro-in{min-height:100%;display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.15fr);grid-template-rows:auto 1fr auto;
+  grid-template-areas:"top top" "copy seat" "foot foot";gap:0 3vw;padding:28px clamp(16px,4vw,64px) 22px;max-width:1500px;margin:0 auto}
+.intro-top{grid-area:top;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.intro-top img.cdl{height:84px;width:auto;display:block}
+.intro-guts{display:flex;align-items:center;gap:10px;font-size:13px;color:#cfcfcf;text-align:right;line-height:1.35}
+.intro-guts img{height:34px;width:auto;background:#fff;border-radius:6px;padding:4px 7px}
+.intro-copy{grid-area:copy;align-self:center;padding:24px 0}
+.intro-bar{display:block;width:84px;height:8px;background:#8cc63f;margin-bottom:26px}
+.intro h1{font-family:Oswald,Impact,sans-serif;font-weight:700;text-transform:uppercase;font-size:clamp(46px,6.6vw,104px);line-height:.95;margin:0;letter-spacing:.005em}
+.intro-sub{font-family:Oswald,Impact,sans-serif;text-transform:uppercase;color:#8cc63f;font-size:clamp(18px,2vw,28px);font-weight:600;margin:14px 0 26px;letter-spacing:.01em}
+.quick{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:16px;max-width:520px;backdrop-filter:blur(6px)}
+.quick-label{font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:#a9a9a9;font-weight:600;margin:0 0 8px}
+.quick-makes{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.quick-makes button{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:#fff;border-radius:999px;padding:7px 13px;font-weight:600;font-size:13.5px;cursor:pointer;transition:background .15s,border-color .15s}
+.quick-makes button:hover{border-color:#8cc63f}
+.quick-makes button.on{background:#8cc63f;border-color:#8cc63f;color:#0b0b0b}
+.quick-row{display:grid;grid-template-columns:1.4fr 1fr;gap:10px;margin-bottom:14px}
+.quick-row label{display:flex;flex-direction:column;gap:5px;font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:#a9a9a9;font-weight:600}
+.quick select{appearance:none;-webkit-appearance:none;background:#161616 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23bbb' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 12px center;
+  color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:9px;padding:10px 34px 10px 12px;font:600 15px Inter,system-ui,sans-serif;text-transform:none;letter-spacing:0}
+.quick select:focus-visible,.quick-makes button:focus-visible,.intro-cta:focus-visible{outline:2px solid #8cc63f;outline-offset:2px}
+.intro-cta{width:100%;background:#8cc63f;color:#0b0b0b;border:0;border-radius:10px;padding:14px 18px;font:700 20px Oswald,Impact,sans-serif;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;display:flex;justify-content:center;gap:10px;transition:filter .15s,transform .15s}
+.intro-cta:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.intro-seat{grid-area:seat;display:flex;flex-direction:column;justify-content:center;min-height:0;min-width:0}
+#heroStage{position:relative;width:100%;aspect-ratio:16/10;min-height:260px}
+#heroStage canvas{display:block;width:100%!important;height:100%!important}
+#heroStage .hero-wait{position:absolute;inset:0;display:grid;place-items:center;color:#8a8a8a;font-size:13px}
+.intro-colors{align-self:flex-end;text-align:left;margin-top:4px;max-width:100%}
+.intro-colors span{display:block;font-family:Oswald,Impact,sans-serif;text-transform:uppercase;color:#cfcfcf;font-size:17px;margin-bottom:8px;letter-spacing:.02em}
+.intro-colors div{display:flex;flex-wrap:wrap;gap:6px}
+.intro-colors button{width:31px;height:31px;border-radius:5px;border:2px solid rgba(255,255,255,.18);cursor:pointer;padding:0;background-size:cover;transition:transform .12s}
+.intro-colors button:hover{transform:translateY(-2px)}
+.intro-colors button.on{border-color:#fff;box-shadow:0 0 0 2px #8cc63f}
+.intro-foot{grid-area:foot;display:flex;flex-wrap:wrap;gap:6px 22px;justify-content:center;color:#9a9a9a;font-size:13px;margin:18px 0 0;padding-top:16px;border-top:1px solid rgba(255,255,255,.1)}
+.intro-foot b{color:#e6e6e6;font-weight:600}
+.brand-tl img{cursor:pointer}
+@media (max-width:900px){
+  .intro-in{grid-template-columns:1fr;grid-template-areas:"top" "head" "seat" "quick" "foot";padding-top:18px}
+  .intro-top img.cdl{height:56px}
+  .intro-guts span{display:none}
+  .intro-copy{display:contents}
+  .intro-head{grid-area:head;padding-top:14px}
+  .intro-bar{margin-bottom:16px;height:6px;width:64px}
+  .intro-sub{margin:10px 0 6px}
+  .quick{grid-area:quick;margin-top:16px;max-width:none}
+  #heroStage{min-height:200px}
+  .intro-colors{align-self:stretch}
+  .intro-colors button{width:30px;height:30px}
+}
 </style>
+<script>try { if (/(^#|&)mk=/.test(location.hash)) document.documentElement.classList.add('has-design'); } catch (e) {}</script>
 </head>
 <body>
+
+<section class="intro" id="intro" aria-label="Choose your bike">
+  <div class="intro-in">
+    <div class="intro-top">
+      <img class="cdl" src="assets/cactus-decal-logo.png" alt="Cactus Decal Lab">
+      <div class="intro-guts"><span>Official GUTS Racing<br>rib seat covers</span><img src="assets/guts-logo.png" alt="GUTS Racing"></div>
+    </div>
+    <div class="intro-copy">
+      <div class="intro-head">
+        <i class="intro-bar"></i>
+        <h1>Build your<br>custom<br>seat cover</h1>
+        <p class="intro-sub">Choose your bike, colors &amp; logos</p>
+      </div>
+      <form class="quick" id="quick">
+        <p class="quick-label">Your bike</p>
+        <div class="quick-makes" id="qMakes" role="group" aria-label="Brand"></div>
+        <div class="quick-row">
+          <label>Model<select id="qModel"></select></label>
+          <label>Year<select id="qYear"></select></label>
+        </div>
+        <button class="intro-cta" type="submit">Start designing <span aria-hidden="true">&rarr;</span></button>
+      </form>
+    </div>
+    <div class="intro-seat">
+      <div id="heroStage"><div class="hero-wait">Loading seat&hellip;</div></div>
+      <div class="intro-colors"><span>GUTS grip colors</span><div id="heroColors"></div></div>
+    </div>
+    <p class="intro-foot"><span><b>Genuine GUTS Racing</b> &middot; made in the USA</span><span><b>6&ndash;10 days</b> delivery</span><span><b>Free shipping</b> across the GCC</span><span><b>Secure checkout</b> with Stripe</span></p>
+  </div>
+</section>
 
 <main class="layout">
   <section class="viewer" aria-label="3D seat preview">
@@ -321,6 +410,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { DecalGeometry } from 'three/addons/geometries/DecalGeometry.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { PRICING, COLOR_NAMES, validate, quote, describe } from './shop.mjs';
 
 /* =====================================================================
@@ -359,6 +449,7 @@ const CONFIG = {
       // this model has the seat inside the livery mesh: take the connected part that sits inside this box
       seat: { material: 'mat_livery_0_277_001_COLOR_0', box: [[-0.12, 0.72, -0.72], [0.12, 0.92, 0.18]] },
       logo: { material: 'mat_livery_0_277_001_COLOR_0', y: 0.75, z: 0.25, size: [0.15, 0.085] },
+      knobby: ['mat_fronttyre001_COLOR_0', 'mat_backtyre001_COLOR_0_001'],   // the model came with road tyres: give it motocross knobs
       models: modelList(['TC 50', 'TC 65', 'TC 85', 'TC 125', 'TC 250', 'FC 250', 'FC 350', 'FC 450', 'TX 300', 'FX 350', 'FX 450',
         'TE 150', 'TE 250', 'TE 300', 'FE 250', 'FE 350', 'FE 450', 'FE 501'], years(2014, 2026)),
     },
@@ -657,6 +748,62 @@ function extractRims(root, metalMesh, tyreMaterial, { inner = 0.6, outer = 0.88,
     return r >= inner * w.R && r <= outer * w.R && Math.abs(p.x - w.c.x) <= width;
   }))));
 }
+// Motocross tyres: turn smooth/road tyres into knobby ones. The tyre meshes stay as the carcass (repainted as
+// plain rubber) and rows of square knobs are planted on their tread, following the tyre's rounded profile.
+function addKnobs(root, materials) {
+  const tyres = []; root.traverse(o => { if (o.isMesh && materials.includes(o.material.name)) tyres.push(o); });
+  if (!tyres.length) return null;
+  const rubber = new THREE.MeshStandardMaterial({ color: '#1c1c1c', roughness: 0.93, metalness: 0 });
+  const pts = [[], []], v = new THREE.Vector3(), mid = new THREE.Box3();
+  for (const t of tyres) { t.material = rubber; t.updateWorldMatrix(true, false); mid.expandByObject(t); }
+  const zMid = (mid.min.z + mid.max.z) / 2;
+  for (const t of tyres) {
+    const p = t.geometry.attributes.position;
+    for (let i = 0; i < p.count; i++) { v.fromBufferAttribute(p, i).applyMatrix4(t.matrixWorld); pts[v.z > zMid ? 0 : 1].push(v.clone()); }
+  }
+  // knob shape: a square frustum (slightly narrower on top), scaled per instance
+  const knob = new THREE.CylinderGeometry(0.62, 0.71, 1, 4, 1).rotateY(Math.PI / 4).translate(0, 0.5, 0);
+  const mats = [], X = V(1, 0, 0), m = new THREE.Matrix4(), s = new THREE.Vector3();
+  for (const P of pts) {
+    if (P.length < 50) continue;
+    const box = new THREE.Box3().setFromPoints(P), c = box.getCenter(new THREE.Vector3());
+    const hw = (box.max.x - box.min.x) / 2, NB = 16, prof = new Array(NB + 1).fill(0);
+    for (const q of P) {
+      const b = Math.round(((q.x - c.x) / hw * 0.5 + 0.5) * NB);
+      prof[b] = Math.max(prof[b], Math.hypot(q.y - c.y, q.z - c.z));
+    }
+    { // low-poly tyres leave empty bins: fill them by interpolating between the nearest filled ones
+      const filled = prof.map((r, i) => r > 0 ? i : -1).filter(i => i >= 0);
+      for (let i = 0; i <= NB; i++) if (!prof[i]) {
+        const a = filled.filter(j => j < i).at(-1), b = filled.find(j => j > i);
+        prof[i] = a === undefined ? prof[b] : b === undefined ? prof[a] : prof[a] + (prof[b] - prof[a]) * (i - a) / (b - a);
+      }
+    }
+    const R = Math.max(...prof);
+    const rAt = x => { const f = Math.min(NB, Math.max(0, (x / hw * 0.5 + 0.5) * NB)), i = Math.min(NB - 1, Math.floor(f)); return prof[i] + (prof[i + 1] - prof[i]) * (f - i); };
+    const rows = Math.round(2 * Math.PI * R / 0.04), h = 0.017;
+    // alternating rows: centre + shoulder knobs, then two inner + two outer-shoulder knobs (classic MX block pattern)
+    const pattern = [[0, -0.66, 0.66], [-0.34, 0.34, -0.9, 0.9]];
+    for (let r = 0; r < rows; r++) {
+      const a = (r / rows) * Math.PI * 2, u = V(0, Math.cos(a), Math.sin(a)), t = new THREE.Vector3().crossVectors(X, u).normalize();
+      for (const fx of pattern[r % 2]) {
+        const x = fx * hw, rr = rAt(x);
+        if (rr < R * 0.72) continue;
+        const slope = (rAt(x + 0.004) - rAt(x - 0.004)) / 0.008;
+        const n = u.clone().addScaledVector(X, -slope).normalize(), lat = new THREE.Vector3().crossVectors(n, t).normalize();
+        const w = (Math.abs(fx) > 0.6 ? 0.17 : 0.22) * hw * 2;                    // shoulder knobs a bit narrower
+        m.makeBasis(lat, n, t).scale(s.set(w, h, 0.026));
+        m.setPosition(V(c.x + x, c.y, c.z).addScaledVector(u, rr).addScaledVector(n, -0.002));
+        mats.push(m.clone());
+      }
+    }
+  }
+  const im = new THREE.InstancedMesh(knob, rubber, mats.length);
+  mats.forEach((mm, i) => im.setMatrixAt(i, mm));
+  im.castShadow = im.receiveShadow = true;
+  root.add(im);
+  return im;
+}
 function initSeat(g) {
   const p = g.attributes.position, NB = SEAT.NB;
   let z0 = -Infinity, z1 = Infinity;
@@ -899,6 +1046,7 @@ new ResizeObserver(resize).observe(stage); resize();
 
 let lastFrame = performance.now();
 renderer.setAnimationLoop(now => {
+  if (intro.open) { renderHero(now); lastFrame = now; return; }
   ground.rotation.y += Math.min(0.1, (now - lastFrame) / 1000) * DESERT_SPEED; lastFrame = now; SAND_U.uRotY.value = ground.rotation.y;
   if (tween) {
     const k = Math.min(1, (now - tween.t0) / tween.dur), e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
@@ -938,6 +1086,7 @@ async function prepareBike(make) {
     const g = metal && extractRims(root, metal, cfg.rims.tyre);
     if (g) { const m = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ color: cfg.rims.color, metalness: 0.6, roughness: 0.35 })); m.castShadow = m.receiveShadow = true; root.add(m); }
   }
+  if (cfg.knobby) addKnobs(root, cfg.knobby);
   let seatGeo;
   if (cfg.seat.box) seatGeo = extractPart(seatSrc, new THREE.Box3(V(...cfg.seat.box[0]), V(...cfg.seat.box[1])));
   else { seatGeo = toWorldFloat(seatSrc); seatSrc.parent.remove(seatSrc); }
@@ -1058,10 +1207,7 @@ function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.ad
 function bindUI() {
   $$('#views button').forEach(b => b.onclick = () => goView(b.dataset.view));
   $('#btnSpin').onclick = () => { controls.autoRotate = !controls.autoRotate; $('#btnSpin').style.borderColor = controls.autoRotate ? 'var(--ink)' : ''; };
-  $('#selMake').onchange = e => {
-    state.make = e.target.value; state.model = CONFIG.bikes[state.make].defaultModel; fillModels(); update();
-    loadBike(state.make).catch(err => { console.error(err); toast('Could not load the 3D model'); });
-  };
+  $('#selMake').onchange = e => setMake(e.target.value);
   $('#selModel').onchange = e => { state.model = e.target.value; fillYears(); update(); };
   $('#selYear').onchange = e => { state.year = e.target.value; update(); };
   $$('.part').forEach(b => b.onclick = () => { state.part = b.dataset.part; update(); });
@@ -1132,13 +1278,83 @@ async function pay() {
   }
 }
 
+function setMake(make) {
+  if (make === state.make && SEAT.mesh) return;
+  state.make = make; state.model = CONFIG.bikes[make].defaultModel; fillModels(); update();
+  loadBike(make).catch(err => { console.error(err); toast('Could not load the 3D model'); });
+}
+
+/* ============================ INTRO (landing + quick bike picker) ============================ */
+// While the intro is open the main renderer is idle; the seat (with ribs and logos) is borrowed into a small
+// dark "studio" scene and drawn into the hero canvas, so it always shows the real cover for the chosen bike.
+const intro = { open: false, renderer: null, scene: null, camera: null, t0: 0 };
+function initHero() {
+  const r = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  r.setPixelRatio(Math.min(devicePixelRatio, 2)); r.toneMapping = THREE.NeutralToneMapping; r.toneMappingExposure = 1.05;
+  const s = new THREE.Scene();
+  s.environment = new THREE.PMREMGenerator(r).fromScene(new RoomEnvironment(), 0.04).texture; s.environmentIntensity = 0.55;
+  const key = new THREE.DirectionalLight(0xffffff, 2.4); key.position.set(1.5, 3, 2); s.add(key);
+  const rim = new THREE.DirectionalLight(0xff6a50, 1.6); rim.position.set(-2, 0.6, -2.5); s.add(rim);
+  const fill = new THREE.DirectionalLight(0xcfe8b0, 0.6); fill.position.set(-2, 1, 2); s.add(fill);
+  Object.assign(intro, { renderer: r, scene: s, camera: new THREE.PerspectiveCamera(26, 1, 0.01, 50) });
+  $('#heroStage').appendChild(r.domElement);
+}
+const heroBox = new THREE.Box3(), heroC = new THREE.Vector3();
+function renderHero(now) {
+  const host = $('#heroStage'), w = host.clientWidth, h = host.clientHeight;
+  if (!SEAT.mesh || !w) return;
+  const { renderer: r, scene: s, camera: cam } = intro;
+  if (r.domElement.width !== Math.round(w * r.getPixelRatio()) || r.domElement.height !== Math.round(h * r.getPixelRatio())) { r.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); }
+  heroBox.setFromObject(SEAT.mesh).getCenter(heroC);
+  // seen from the left and a little behind, so it lies diagonally: rear low-left, nose up-right; sways gently
+  const L = SEAT.z0 - SEAT.z1, a = 0.42 + Math.sin((now - intro.t0) / 3800) * 0.22;
+  const d = L * (cam.aspect < 1.2 ? 1.9 : 1.3);
+  cam.position.set(heroC.x - Math.cos(a) * d, heroC.y + d * 0.62, heroC.z - Math.sin(a) * d);
+  cam.lookAt(heroC.x, heroC.y - L * 0.04, heroC.z);
+  s.add(SEAT.mesh); s.add(extras);                      // borrow the seat for this frame...
+  r.render(s, cam);
+  scene.add(SEAT.mesh); scene.add(extras);              // ...and give it back to the bike scene
+  host.querySelector('.hero-wait')?.remove();
+}
+function fillQuick() {
+  $('#qMakes').querySelectorAll('button').forEach(b => { b.classList.toggle('on', b.dataset.make === state.make); b.setAttribute('aria-pressed', b.dataset.make === state.make); });
+  const ms = makeModels();
+  $('#qModel').innerHTML = Object.keys(ms).map(m => `<option>${m}</option>`).join(''); $('#qModel').value = state.model;
+  $('#qYear').innerHTML = ms[state.model].map(y => `<option>${y}</option>`).join(''); $('#qYear').value = state.year;
+  $$('#heroColors button').forEach(b => b.classList.toggle('on', b.dataset.color === state.colors.center));
+}
+function openIntro() {
+  if (!intro.renderer) initHero();
+  intro.open = true; intro.t0 = performance.now();
+  $('#intro').classList.remove('closing'); $('#intro').style.display = 'block'; document.documentElement.classList.remove('has-design');
+  document.body.classList.add('intro-open'); $('main').inert = true; fillQuick();
+}
+function closeIntro() {
+  intro.open = false; $('#intro').classList.add('closing');
+  document.body.classList.remove('intro-open'); $('main').inert = false;
+  setTimeout(() => { if (!intro.open) $('#intro').style.display = 'none'; }, 460);
+  resize(); goView('seat');
+}
+function bindIntro() {
+  $('#qMakes').innerHTML = Object.keys(CONFIG.bikes).map(m => `<button type="button" data-make="${m}">${m}</button>`).join('');
+  $('#heroColors').innerHTML = COLORS.map(c => `<button type="button" data-color="${c.id}" title="${c.name}" aria-label="${c.name} center panel" style="${swatchStyle(c)}"></button>`).join('');
+  $('#qMakes').onclick = e => { const b = e.target.closest('[data-make]'); if (!b) return; setMake(b.dataset.make); fillQuick(); };
+  $('#qModel').onchange = e => { state.model = e.target.value; fillYears(); update(); fillQuick(); };
+  $('#qYear').onchange = e => { state.year = e.target.value; update(); };
+  $('#heroColors').onclick = e => { const b = e.target.closest('[data-color]'); if (!b) return; state.colors.center = b.dataset.color; update({ colors: true }); fillQuick(); };
+  $('#quick').onsubmit = e => { e.preventDefault(); closeIntro(); };
+  $('.brand-tl img').onclick = openIntro; $('.brand-tl img').title = 'Change bike';
+}
+
 /* ============================ BOOT ============================ */
 readHash();
 try { await Promise.race([document.fonts.load('700 100px Oswald'), new Promise(r => setTimeout(r, 2500))]); } catch {}
 const loadTex = url => { const t = new THREE.TextureLoader().load(url); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; };
 M.logoTop = M.logoSide = decalMat(loadTex(CONFIG.seatLogo));
 M.bikeLogo = decalMat(loadTex(CONFIG.bikeLogo));
-buildUI(); bindUI();
+buildUI(); bindUI(); bindIntro();
+const showIntro = !document.documentElement.classList.contains('has-design') && new URLSearchParams(location.search).get('checkout') !== 'success';
+if (showIntro) openIntro(); else $('#intro').style.display = 'none';
 try {
   await loadBike(state.make, true);
 } catch (err) {
