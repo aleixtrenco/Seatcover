@@ -16,6 +16,7 @@
 /* Hallmark · reworded "Customize your colors below" to "Customize your colors" · the black bar became a section head and "below" pointed at nothing */
 /* Hallmark · reworded dashed option lines to colons and full stops ("Original Grip Material — used by…" and five more) · 19 names the dash */
 /* Hallmark · reworded "Drag to rotate · scroll or pinch to zoom · right-drag to pan" to commas, the GCC facts rail, "6–10 days" to "6 to 10 days" · 63 and 19 */
+/* Hallmark · dropped heroColors · the owner asked for no color choice on the intro; the seat cycles random looks every 5 seconds instead */
 @import url("./tokens.css");
 @import url("./base.css");
 
@@ -70,14 +71,6 @@ body.intro-open { overflow-y: hidden; }
 #heroStage { position: relative; width: 100%; aspect-ratio: 4 / 3; max-height: 68dvh; }
 #heroStage canvas { display: block; width: 100% !important; height: 100% !important; }
 #heroStage .hero-wait { position: absolute; inset: 0; display: grid; place-items: center; color: var(--color-muted); font-size: var(--text-sm); }
-.intro-colors { display: grid; gap: var(--space-xs); justify-items: end; }
-.intro-colors p { font-size: var(--text-sm); color: var(--color-muted); }
-.intro-colors div { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-xs); }
-.intro-colors button { width: 32px; height: 32px; padding: 0; border: var(--rule-hair) solid var(--color-swatch-edge); border-radius: var(--radius-swatch); background-size: cover; cursor: pointer; }
-.intro-colors button:hover { transform: translateY(-2px); }
-.intro-colors button:active { transform: none; }
-.intro-colors button.on { outline: 2px solid var(--color-ink); outline-offset: 2px; }
-.intro-colors button:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
 .intro-facts { list-style: none; margin: 0; padding: var(--space-md) 0 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: var(--rule-hair) solid var(--color-rule); font-size: var(--text-sm); color: var(--color-muted); }
 .intro-facts li { padding-inline: var(--space-md); border-left: var(--rule-hair) solid var(--color-rule); }
 .intro-facts li:first-child { padding-left: 0; border-left: 0; }
@@ -214,7 +207,6 @@ dialog::backdrop { background: var(--color-scrim); }
   .intro-seat { order: 3; }
   .quick { order: 4; max-width: none; }
   #heroStage { max-height: 44dvh; }
-  .intro-colors, .intro-colors div { justify-items: start; justify-content: flex-start; }
   .intro-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: var(--space-md); }
   .intro-facts li:nth-child(3) { padding-left: 0; border-left: 0; }
   .layout { grid-template-columns: minmax(0, 1fr); }
@@ -252,7 +244,6 @@ dialog::backdrop { background: var(--color-scrim); }
       </div>
       <figure class="intro-seat">
         <div id="heroStage"><div class="hero-wait">Loading seat…</div></div>
-        <figcaption class="intro-colors"><p>GUTS grip colors, tap to try one on the top panel</p><div id="heroColors"></div></figcaption>
       </figure>
     </div>
     <ul class="intro-facts">
@@ -1159,9 +1150,10 @@ function rebuildSeat() {
   if (state.attach === 'velcro') { const v = hitDown(0, zOf(0.1)); if (v) extras.add(decal(v, back, V(0.06, 0.06, 0.06).multiplyScalar(SEAT.k), M.velcro)); }
 }
 function applyAllColors() {
-  setPanel(SEAT_U.uSide, SEAT_U.uSideCamo, state.colors.side);
-  setPanel(SEAT_U.uCenter, SEAT_U.uCenterCamo, state.colors.center);
-  applyColor(M.rib, state.colors.rib); applyGrip();
+  const c = (intro.open && intro.look) || state.colors;   // the intro shows its own random looks; the customer's colors stay untouched
+  setPanel(SEAT_U.uSide, SEAT_U.uSideCamo, c.side);
+  setPanel(SEAT_U.uCenter, SEAT_U.uCenterCamo, c.center);
+  applyColor(M.rib, c.rib); applyGrip();
 }
 
 /* ============================ UI ============================ */
@@ -1343,27 +1335,43 @@ function fillQuick() {
   const ms = makeModels();
   $('#qModel').innerHTML = Object.keys(ms).map(m => `<option>${m}</option>`).join(''); $('#qModel').value = state.model;
   $('#qYear').innerHTML = ms[state.model].map(y => `<option>${y}</option>`).join(''); $('#qYear').value = state.year;
-  $$('#heroColors button').forEach(b => b.classList.toggle('on', b.dataset.color === state.colors.center));
+}
+// The intro seat shows a new random GUTS color combination every 5 seconds (held while hovered, off under reduced motion).
+const LOOK_EVERY = 5000;
+function randomLook() {
+  const pick = () => COLORS[Math.floor(Math.random() * COLORS.length)].id;
+  // panels that touch must read apart: not the same color, and not two near shades (white and yellow, the two blues)
+  const rgb = id => { const c = colorById(id); return c.camo ? [110, 100, 70] : [1, 3, 5].map(i => parseInt(c.hex.slice(i, i + 2), 16)); };
+  const apart = (a, b) => { const p = rgb(a), q = rgb(b); return a !== b && Math.hypot(p[0] - q[0], p[1] - q[1], p[2] - q[2]) > 110; };
+  const side = pick(); let center = pick(), rib = pick();
+  for (let n = 0; n < 50 && !apart(center, side); n++) center = pick();
+  for (let n = 0; n < 50 && !(apart(rib, center) && apart(rib, side)); n++) rib = pick();
+  intro.look = { side, center, rib }; applyAllColors();
 }
 function openIntro() {
   if (!intro.renderer) initHero();
   intro.open = true; intro.t0 = performance.now();
   $('#intro').classList.remove('closing'); $('#intro').style.display = 'block'; document.documentElement.classList.remove('has-design');
   document.body.classList.add('intro-open'); $('main').inert = true; fillQuick();
+  randomLook();
+  clearInterval(intro.timer);
+  if (!REDUCED.matches) intro.timer = setInterval(() => { if (!intro.hold) randomLook(); }, LOOK_EVERY);
 }
 function closeIntro() {
-  intro.open = false; $('#intro').classList.add('closing');
+  clearInterval(intro.timer); intro.look = null;
+  intro.open = false; applyAllColors();                 // back to the customer's own colors for the configurator
+  $('#intro').classList.add('closing');
   document.body.classList.remove('intro-open'); $('main').inert = false;
   setTimeout(() => { if (!intro.open) $('#intro').style.display = 'none'; }, 460);
   resize(); goView('seat');
 }
 function bindIntro() {
   $('#qMakes').innerHTML = Object.keys(CONFIG.bikes).map(m => `<button type="button" class="chip" data-make="${m}">${m}</button>`).join('');
-  $('#heroColors').innerHTML = COLORS.map(c => `<button type="button" data-color="${c.id}" title="${c.name}" aria-label="${c.name} center panel" style="${swatchStyle(c)}"></button>`).join('');
+  $('#heroStage').onmouseenter = () => { intro.hold = true; };
+  $('#heroStage').onmouseleave = () => { intro.hold = false; };
   $('#qMakes').onclick = e => { const b = e.target.closest('[data-make]'); if (!b) return; setMake(b.dataset.make); fillQuick(); };
   $('#qModel').onchange = e => { state.model = e.target.value; fillYears(); update(); fillQuick(); };
   $('#qYear').onchange = e => { state.year = e.target.value; update(); };
-  $('#heroColors').onclick = e => { const b = e.target.closest('[data-color]'); if (!b) return; state.colors.center = b.dataset.color; update({ colors: true }); fillQuick(); };
   $('#quick').onsubmit = e => { e.preventDefault(); closeIntro(); };
   $('.brand-tl img').onclick = openIntro; $('.brand-tl img').title = 'Change bike';
 }
