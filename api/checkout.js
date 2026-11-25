@@ -49,6 +49,13 @@ export default async function handler(req, res) {
     shipping_address_collection: { allowed_countries: PRICING.shipCountries },
     phone_number_collection: { enabled: true },
     metadata,
+    // Every paid order gets a numbered Stripe invoice, emailed with a PDF and listed under Invoices.
+    customer_creation: 'always',
+    tax_id_collection: { enabled: true },
+    invoice_creation: { enabled: true, invoice_data: {
+      description: `GUTS rib seat cover for ${order.make} ${order.model} ${order.year}`.slice(0, 1500),
+      metadata,
+    } },
     payment_intent_data: { metadata, description: `Seat cover: ${order.make} ${order.model} ${order.year} ×${order.qty}` },
   };
   if (PRICING.shipping > 0) session.shipping_options = [{ shipping_rate_data: {

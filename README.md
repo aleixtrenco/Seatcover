@@ -35,6 +35,8 @@ It attaches the full seat spec to the Stripe payment (bike, height, material, co
 
 Never put the secret key in the code or in GitHub.
 
+Every paid order creates a numbered Stripe invoice (with a PDF) that is emailed to the customer and listed under **Invoices** in the Stripe dashboard. Business customers can add their tax number (TRN) at checkout. Your business details, logo and invoice footer come from **Settings → Business** and **Settings → Billing → Invoices** in Stripe. Stripe only sends emails for live payments, never for test ones.
+
 ### Prices, shipping and countries
 
 Prices, currency, flat shipping (`shipping`) and the countries you ship to (`shipCountries`) are all set in **`shop.mjs`**. Both the page and the checkout use this file.
